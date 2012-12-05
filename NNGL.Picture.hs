@@ -3,11 +3,18 @@ module NNGL.Picture where
 import NNGL.Base
 
 height :: Picture -> Int
-height = length
+height pict | isEmptyPicture pict = 0
+            | otherwise           = length pict
 
 width :: Picture -> Int
-width   [] = 0
-width pict = length (head pict)
+width pict | isEmptyPicture pict = 0
+           | otherwise           = length (head pict)
+
+emptyPicture :: Picture
+emptyPicture = [[]]
+
+isEmptyPicture :: Picture -> Bool
+isEmptyPicture pict = pict == emptyPicture || length pict == 0
 
 isCorrectPicture :: Picture -> Bool
 isCorrectPicture pict = all (\row -> length row == width pict) pict
@@ -23,7 +30,15 @@ pict1 `isSubPictureOf` pict2 | pict1W > pict2W || pict1H > pict2H = False
 
 -- picture -> top left cell -> width -> height
 isBlankRect :: Picture -> (Int, Int) -> Int -> Int -> Bool
-isBlankRect pict (r, c) w h = and [ isBlank $ (pict !! i) !! j | i <- [r..r + h - 1], j <- [c..c + w - 1] ]
+isBlankRect pict (r, c) w h = isPropRect pict (r, c) w h isBlank
+
+-- picture -> top left cell -> width -> height
+isFilledRect :: Picture -> (Int, Int) -> Int -> Int -> Bool
+isFilledRect pict (r, c) w h = isPropRect pict (r, c) w h isPoint
+
+-- picture -> top left cell -> width -> height -> predicate
+isPropRect :: Picture -> (Int, Int) -> Int -> Int -> (Char -> Bool) -> Bool
+isPropRect pict (r, c) w h prop = and [ prop $ (pict !! i) !! j | i <- [r..r + h - 1], j <- [c..c + w - 1] ] 
 
 showPicture :: Picture -> String
 showPicture pict = concatMap (\c -> if c /= '\n' then c:" " else c:"") (unlines pict)

@@ -17,3 +17,6 @@ point = [[pointChar]]
 isBlank :: Char -> Bool
 isBlank c = c == blankChar
 
+isPoint :: Char -> Bool
+isPoint c = c == pointChar
+

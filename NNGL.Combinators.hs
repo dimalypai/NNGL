@@ -65,6 +65,8 @@ beside = besideMiddle
 
 -- higher order combinators
 edgeCombine :: Picture -> Picture -> PictureCombinator -> (Picture -> Picture) -> (Picture -> Int) -> Picture
+edgeCombine pict1 pict2 _    _     _   | isEmptyPicture pict1 = pict2
+edgeCombine pict1 pict2 _    _     _   | isEmptyPicture pict2 = pict1
 edgeCombine pict1 pict2 comb trans dim | pict1D == pict2D = pict1 `comb` pict2
                                        | pict1D >  pict2D = edgeCombine pict1 (trans pict2) comb trans dim
                                        | otherwise        = edgeCombine (trans pict1) pict2 comb trans dim
@@ -72,6 +74,8 @@ edgeCombine pict1 pict2 comb trans dim | pict1D == pict2D = pict1 `comb` pict2
         pict2D = dim pict2
 
 centerCombine :: Picture -> Picture -> PictureCombinator -> (Picture -> Picture) -> (Picture -> Picture) -> (Picture -> Int) -> (Picture -> Int) -> Picture
+centerCombine pict1 pict2 _    _      _      _    _    | isEmptyPicture pict1 = pict2
+centerCombine pict1 pict2 _    _      _      _    _    | isEmptyPicture pict2 = pict1
 centerCombine pict1 pict2 comb trans1 trans2 dim1 dim2 | pict1D1 == pict2D1 = pict1 `comb` pict2
                                                        | pictD1Diff > 0 = if even pictD1Diff
                                                                           then centerCombine pict1 (trans1 pict2) comb trans1 trans2 dim1 dim2
@@ -85,24 +89,24 @@ centerCombine pict1 pict2 comb trans1 trans2 dim1 dim2 | pict1D1 == pict2D1 = pi
         pict2D2 = dim2 pict2
         pictD1Diff = pict1D1 - pict2D1
 
+-- infinite combinator
+vrepeat :: Picture -> Picture
+vrepeat pict = pict `above'` vrepeat pict
+
+-- replication combinators
+hreplicate :: Int -> Picture -> Picture
+hreplicate n pict | n < 1     = emptyPicture
+                  | n == 1    = pict
+                  | otherwise = pict `beside'` hreplicate (n - 1) pict
+
+vreplicate :: Int -> Picture -> Picture
+vreplicate n pict | n < 1     = emptyPicture
+                  | otherwise = take (n * height pict) $ vrepeat pict
+
 -- blanks
 hblanks :: Int -> Picture
 hblanks w = hreplicate w blank
 
 vblanks :: Int -> Picture
 vblanks h = vreplicate h blank
-
--- infinite combinators
-hrepeat :: Picture -> Picture
-hrepeat pict = transpose (vrepeat pict)
-
-vrepeat :: Picture -> Picture
-vrepeat pict = pict `above'` vrepeat pict
-
--- replication combinators
-hreplicate :: Int -> Picture -> Picture
-hreplicate n pict = [take n $ head $ hrepeat pict]
-
-vreplicate :: Int -> Picture -> Picture
-vreplicate n pict = take n $ vrepeat pict
 
