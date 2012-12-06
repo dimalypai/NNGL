@@ -4,6 +4,7 @@ import NNGL.Base
 import NNGL.Picture
 import NNGL.Primitives
 import NNGL.Combinators
+import NNGL.Generation
 import Test.QuickCheck
 
 newtype Dimension = Dimension Int
@@ -204,6 +205,27 @@ prop_vblanks :: Dimension -> Bool
 prop_vblanks (Dimension h) = isCorrectPicture bl && height bl == h
   where bl = vblanks h
 
+-- generation
+prop_generate_pointSum :: Pict -> Bool
+prop_generate_pointSum (Pict pict) = and [ pointsInRow pict r == sum (rows nng !! r) | r <- rowIndices pict ] &&
+                                     and [ pointsInColumn pict c == sum (columns nng !! c) | c <- columnIndices pict ]
+  where nng = generate pict
+
+prop_generate_numBlocks :: Pict -> Bool
+prop_generate_numBlocks (Pict pict) = and [ length (blocksInRow pict r) == length (rows nng !! r) | r <- rowIndices pict ] &&
+                                      and [ length (blocksInColumn pict c) == length (columns nng !! c) | c <- columnIndices pict ]
+  where nng = generate pict
+
+prop_generate_dim :: Pict -> Bool
+prop_generate_dim (Pict pict) = length (rows nng) == height pict &&
+                                length (columns nng) == width pict
+  where nng = generate pict
+
+prop_generate_dimSum :: Pict -> Bool
+prop_generate_dimSum (Pict pict) = and [ let row = rows nng !! r in sum row + length row - 1 <= width pict | r <- rowIndices pict ]&&
+                                   and [ let col = columns nng !! c in sum col + length col - 1 <= height pict | c <- columnIndices pict ]
+  where nng = generate pict
+
 -- main
 runTests :: IO ()
 runTests = do
@@ -234,6 +256,10 @@ runTests = do
   runTest "vreplicate" prop_vreplicate
   runTest "hblanks" prop_hblanks
   runTest "vblanks" prop_vblanks
+  runTest "generate_pointSum" prop_generate_pointSum
+  runTest "generate_numBlocks" prop_generate_numBlocks
+  runTest "generate_dim" prop_generate_dim
+  runTest "generate_dimSum" prop_generate_dimSum
 
 runTest :: Testable p => String -> p -> IO ()
 runTest name prop = do
