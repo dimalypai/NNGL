@@ -124,7 +124,7 @@ prop_center p1@(Pict pict1) p2@(Pict pict2) comb r = prop_above_below p1 p2 comb
 
 -- above
 prop_aboveEdge :: Pict -> Pict -> PictureCombinator -> Int -> Bool
-prop_aboveEdge p1@(Pict pict1) p2@(Pict pict2) comb c = prop_edge p1 p2 comb (if width pict1 < width pict2 then 0 else height pict1) c
+prop_aboveEdge p1@(Pict pict1) p2@(Pict pict2) comb = prop_edge p1 p2 comb (if width pict1 < width pict2 then 0 else height pict1)
 
 prop_aboveLeft :: Pict -> Pict -> Bool
 prop_aboveLeft p1@(Pict pict1) p2@(Pict pict2) = prop_aboveEdge p1 p2 aboveLeft (min (width pict1) (width pict2))
@@ -137,7 +137,7 @@ prop_aboveRight p1 p2 = prop_aboveEdge p1 p2 aboveRight 0
 
 -- below
 prop_belowEdge :: Pict -> Pict -> PictureCombinator -> Int -> Bool
-prop_belowEdge p1@(Pict pict1) p2@(Pict pict2) comb c = prop_edge p1 p2 comb (if width pict1 < width pict2 then height pict2 else 0) c
+prop_belowEdge p1@(Pict pict1) p2@(Pict pict2) comb = prop_edge p1 p2 comb (if width pict1 < width pict2 then height pict2 else 0)
 
 prop_belowLeft :: Pict -> Pict -> Bool
 prop_belowLeft p1@(Pict pict1) p2@(Pict pict2) = prop_belowEdge p1 p2 belowLeft (min (width pict1) (width pict2))

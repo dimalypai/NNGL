@@ -14,7 +14,7 @@ emptyPicture :: Picture
 emptyPicture = [[]]
 
 isEmptyPicture :: Picture -> Bool
-isEmptyPicture pict = pict == emptyPicture || length pict == 0
+isEmptyPicture pict = pict == emptyPicture || null pict
 
 isCorrectPicture :: Picture -> Bool
 isCorrectPicture pict = all (\row -> length row == width pict) pict
