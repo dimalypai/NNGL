@@ -3,7 +3,6 @@ module NNGL.Base where
 type Picture = [[Char]]
 
 data Nonogram = Nonogram { rows :: [[Int]], columns :: [[Int]], picture :: Picture }
-  deriving Show
 
 -- two basic building blocks
 blankChar = ' '
