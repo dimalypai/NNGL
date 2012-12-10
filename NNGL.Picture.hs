@@ -42,10 +42,10 @@ isPropRect :: Picture -> (Int, Int) -> Int -> Int -> (Char -> Bool) -> Bool
 isPropRect pict (r, c) w h prop = and [ prop $ (pict !! i) !! j | i <- [r..r + h - 1], j <- [c..c + w - 1] ]
 
 rowIndices :: Picture -> [Int]
-rowIndices pict = [0..(height pict)-1]
+rowIndices pict = [0..height pict-1]
 
 columnIndices :: Picture -> [Int]
-columnIndices pict = [0..(width pict)-1]
+columnIndices pict = [0..width pict-1]
 
 pointsInRow :: Picture -> Int -> Int
 pointsInRow pict r = length (filter isPoint (pict !! r))
@@ -54,10 +54,10 @@ pointsInColumn :: Picture -> Int -> Int
 pointsInColumn pict c = length (filter isPoint (transpose pict !! c))
 
 blocksInRow :: Picture -> Int -> [[Char]]
-blocksInRow pict r = filter (\cs -> isPoint (head cs)) (group (pict !! r))
+blocksInRow pict r = filter (isPoint . head) (group (pict !! r))
 
 blocksInColumn :: Picture -> Int -> [[Char]]
-blocksInColumn pict c = filter (\cs -> isPoint (head cs)) (group (transpose pict !! c))
+blocksInColumn pict c = filter (isPoint . head) (group (transpose pict !! c))
 
 showPicture :: Picture -> String
 showPicture pict = concatMap (\c -> if c /= '\n' then c:" " else c:"") (unlines pict)
