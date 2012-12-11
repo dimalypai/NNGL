@@ -200,6 +200,12 @@ prop_vflip_involution = prop_flip_rotate (vflip . vflip)
 prop_cwrotate :: Pict -> Bool
 prop_cwrotate = prop_flip_rotate (cwrotate . cwrotate . cwrotate . cwrotate)
 
+prop_acwrotate :: Pict -> Bool
+prop_acwrotate = prop_flip_rotate (acwrotate . acwrotate . acwrotate . acwrotate)
+
+prop_cw_acw_rotate :: Pict -> Bool
+prop_cw_acw_rotate pict = prop_flip_rotate (acwrotate . cwrotate) pict && prop_flip_rotate (cwrotate . acwrotate) pict
+
 -- replication
 prop_replicate :: Int -> Picture -> (Int -> Picture -> Picture) -> (Picture -> Int) -> (Picture -> Int) -> Bool
 prop_replicate n pict repl dim1 dim2 = isCorrectPicture newPict && dim1 newPict == n * dim1 pict && dim2 newPict == dim2 pict
@@ -270,6 +276,8 @@ runTests = do
   runTest "hflip_involution" prop_hflip_involution
   runTest "vflip_involution" prop_vflip_involution
   runTest "cwrotate" prop_cwrotate
+  runTest "acwrotate" prop_acwrotate
+  runTest "cw_acw_rotate" prop_cw_acw_rotate
   runTest "hreplicate" prop_hreplicate
   runTest "vreplicate" prop_vreplicate
   runTest "hblanks" prop_hblanks

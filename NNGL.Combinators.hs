@@ -68,11 +68,14 @@ hflip :: Picture -> Picture
 hflip pict = map reverse pict
 
 vflip :: Picture -> Picture
-vflip = cwrotate . cwrotate
+vflip = hflip . cwrotate . cwrotate
 
 cwrotate :: Picture -> Picture
 cwrotate pict | isEmptyPicture pict = emptyPicture
               | otherwise = map reverse (transpose pict)
+
+acwrotate :: Picture -> Picture
+acwrotate = vflip . hflip . cwrotate
 
 -- higher order combinators
 edgeCombine :: Picture -> Picture -> PictureCombinator -> (Picture -> Picture) -> (Picture -> Int) -> Picture
