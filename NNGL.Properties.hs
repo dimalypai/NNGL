@@ -185,6 +185,21 @@ prop_besideMiddle p1@(Pict pict1) p2@(Pict pict2) = prop_beside p1 p2 besideMidd
 prop_besideBottom :: Pict -> Pict -> Bool
 prop_besideBottom p1 p2 = prop_besideEdge p1 p2 besideBottom 0
 
+-- flip and rotate
+prop_flip_rotate :: (Picture -> Picture) -> Pict -> Bool
+prop_flip_rotate trans (Pict pict) | isEmptyPicture pict = isEmptyPicture newPict
+                                   | otherwise           = newPict == pict
+  where newPict = trans pict
+
+prop_hflip_involution :: Pict -> Bool
+prop_hflip_involution = prop_flip_rotate (hflip . hflip)
+
+prop_vflip_involution :: Pict -> Bool
+prop_vflip_involution = prop_flip_rotate (vflip . vflip)
+
+prop_cwrotate :: Pict -> Bool
+prop_cwrotate = prop_flip_rotate (cwrotate . cwrotate . cwrotate . cwrotate)
+
 -- replication
 prop_replicate :: Int -> Picture -> (Int -> Picture -> Picture) -> (Picture -> Int) -> (Picture -> Int) -> Bool
 prop_replicate n pict repl dim1 dim2 = isCorrectPicture newPict && dim1 newPict == n * dim1 pict && dim2 newPict == dim2 pict
@@ -252,6 +267,9 @@ runTests = do
   runTest "besideTop" prop_besideTop
   runTest "besideMiddle" prop_besideMiddle
   runTest "besideBottom" prop_besideBottom
+  runTest "hflip_involution" prop_hflip_involution
+  runTest "vflip_involution" prop_vflip_involution
+  runTest "cwrotate" prop_cwrotate
   runTest "hreplicate" prop_hreplicate
   runTest "vreplicate" prop_vreplicate
   runTest "hblanks" prop_hblanks

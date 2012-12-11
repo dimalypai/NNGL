@@ -63,6 +63,17 @@ pict1 `besideBottom` pict2 = edgeCombine pict1 pict2 beside' (\pict -> hblanks (
 
 beside = besideMiddle
 
+-- flip and rotate
+hflip :: Picture -> Picture
+hflip pict = map reverse pict
+
+vflip :: Picture -> Picture
+vflip = cwrotate . cwrotate
+
+cwrotate :: Picture -> Picture
+cwrotate pict | isEmptyPicture pict = emptyPicture
+              | otherwise = map reverse (transpose pict)
+
 -- higher order combinators
 edgeCombine :: Picture -> Picture -> PictureCombinator -> (Picture -> Picture) -> (Picture -> Int) -> Picture
 edgeCombine pict1 pict2 _    _     _   | isEmptyPicture pict1 = pict2
